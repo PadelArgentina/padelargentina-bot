@@ -335,24 +335,19 @@ def tarea_orden_dia():
             marcar_hecho_hoy(tid)
             time.sleep(3)
 
-def monitorear_premier():
-    publicados = cargar_publicados()
+def tarea_orden_dia():
     for torneo in TORNEOS_PREMIER:
-        for ss_id in [torneo["ss_id_men"], torneo["ss_id_women"]]:
-            for p in partidos_finalizados_hoy(ss_id):
-                d   = parsear(p)
-                pid = f"premier_{d['id']}"
-                if pid in publicados:
-                    continue
-                tw = tweet_premier(torneo, d["ganadores"], d["perdedores"],
-                                   d["marcador"], d["tiempo"], d["ronda"])
-                if publicar_tweet(tw):
-                    guardar_publicado(pid)
-                    time.sleep(5)
-
-def monitorear_fip():
-    from bs4 import BeautifulSoup
-    publicados = cargar_publicados()
+        tid = f"orden_dia_{torneo['nombre']}"
+        if ya_hecho_hoy(tid):
+            continue
+        if partidos_proximos_hoy(torneo["ss_id_men"]):
+            continue
+        manana = (hora_arg() + timedelta(days=1)).date()
+        url_v2, url_v1 = url_pdf(manana)
+        tw = tweet_orden_dia(torneo, manana, url_v2)
+        if publicar_tweet(tw):
+            marcar_hecho_hoy(tid)
+            time.sleep(3)
     try:
         r    = requests.get("https://www.padelfip.com/es/noticias/",
                             headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
