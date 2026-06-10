@@ -391,7 +391,7 @@ def ciclo():
         print(f"\n🔍 [{hora_arg().strftime('%H:%M:%S')}] Ciclo {contador+1}")
         tarea_orden_dia()
         monitorear_premier()
-   def monitorear_fip():
+def monitorear_fip():
     pass
         print(f"✅ Próximo en {INTERVALO_MINUTOS} min")
         contador += 1
